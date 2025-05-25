@@ -29,7 +29,7 @@ const sectionEditWord = document.querySelector('.section-edit-word');
 const editForeignWordInput = document.getElementById('editForeignWord');
 const editMeaningInput = document.getElementById('editMeaning');
 const saveEditBtn = document.getElementById('saveEditBtn');
-// 이전 오타 수정됨: = document = document.getElementById  -> = document.getElementById
+// 오타 수정: = document = document.getElementById  -> = document.getElementById
 const cancelEditBtn = document.getElementById('cancelEditBtn');
 const editHr = document.querySelector('hr.edit-hr'); // 수정 모드 전용 hr
 
@@ -85,6 +85,8 @@ function getWordsForCurrentMode() {
 
 /**
  * 현재 인덱스의 단어를 화면에 표시하고 상태 메시지를 업데이트합니다.
+ * 이 함수 내에서는 toggleDisplayMode를 호출하지 않습니다.
+ * toggleDisplayMode는 라디오 버튼 변경 이벤트나 초기 로드 시 한 번만 호출됩니다.
  */
 function displayWord() {
     const currentWords = getWordsForCurrentMode();
@@ -147,11 +149,10 @@ function displayWord() {
     // 현재 인덱스 저장
     saveCurrentIndex();
 
-    // displayWord 함수 내부에서 toggleDisplayMode를 호출하면,
-    // 단어가 바뀔 때마다 오버레이가 기본값(가려진 상태)으로 돌아갑니다.
-    // 이는 '클릭하여 보기' 기능의 의도된 동작입니다.
-    toggleDisplayMode();
-    console.log('After displayWord, current foreign:', foreignWordElem.textContent, 'meaning:', meaningElem.textContent);
+    // 여기서 toggleDisplayMode()를 호출하면 안됩니다.
+    // displayWord는 단어 내용만 변경하고, 오버레이 상태는 displayModeRadios의 변경 이벤트가 처리하거나,
+    // 초기 로드 시 window.load에서 한 번만 처리해야 합니다.
+    // console.log('After displayWord, current foreign:', foreignWordElem.textContent, 'meaning:', meaningElem.textContent);
 }
 
 /**
@@ -224,6 +225,8 @@ function toggleFavorite() {
                 currentIndex = 0;
             }
             displayWord(); // 즐겨찾기 리스트가 변경되었으므로 다시 표시
+            // 즐겨찾기 모드에서 단어가 사라졌을 때 오버레이를 다시 적용
+            toggleDisplayMode();
         }
     }
 }
@@ -247,6 +250,8 @@ function changeMode(generalMode) {
     favoriteModeBtn.classList.toggle('active', !isGeneralMode);
 
     displayWord();
+    // 모드 변경 시에도 오버레이 상태를 유지하도록 호출
+    toggleDisplayMode();
 }
 
 /**
@@ -292,6 +297,7 @@ function addWord() {
         currentIndex = words.length - 1; // 마지막 단어로 이동
 
         displayWord(); // 화면 업데이트
+        toggleDisplayMode(); // 새 단어 추가 시 오버레이 적용
 
         // 입력 필드 초기화
         newForeignWordInput.value = '';
@@ -335,6 +341,7 @@ function deleteWord() {
             currentIndex = 0;
         }
         displayWord(); // 화면 업데이트
+        toggleDisplayMode(); // 삭제 후 오버레이 적용
         alert('단어가 삭제되었습니다.');
     }
 }
@@ -385,6 +392,7 @@ function saveEdit() {
 
             cancelEdit(); // 수정 모드 종료
             displayWord(); // 화면 업데이트
+            toggleDisplayMode(); // 수정 후 오버레이 적용
             alert('단어가 수정되었습니다!');
         }
     } else {
@@ -446,6 +454,7 @@ prevBtn.addEventListener('click', () => {
     if (currentIndex > 0) {
         currentIndex--;
         displayWord();
+        toggleDisplayMode(); // 단어 이동 시 오버레이 적용
     } else {
         statusMessageElem.textContent = '자료의 처음입니다.';
     }
@@ -460,6 +469,7 @@ nextBtn.addEventListener('click', () => {
     if (currentIndex < currentWords.length - 1) {
         currentIndex++;
         displayWord();
+        toggleDisplayMode(); // 단어 이동 시 오버레이 적용
     } else {
         statusMessageElem.textContent = '자료의 마지막입니다.';
     }
@@ -496,30 +506,22 @@ displayModeRadios.forEach(radio => {
 window.addEventListener('load', () => {
     words = loadWords(); // localStorage에서 단어 로드 (없으면 샘플 사용)
 
-    // 마지막 사용 모드 (일반/즐겨찾기) 로드
-    const lastAppMode = localStorage.getItem('lastAppMode');
-    if (lastAppMode === 'favorite') {
-        isGeneralMode = false;
-    } else {
-        isGeneralMode = true; // 기본값은 일반 모드
-    }
-    changeMode(isGeneralMode); // 로드된 모드에 따라 UI 업데이트 및 첫 단어 표시
+    // ========== 여기부터 displayMode 로드 및 적용 로직 변경 ==========
 
-    // 언어 표시 모드 (AB/BA) 로드 및 적용
+    // 1. localStorage에서 displayMode를 먼저 로드하고 라디오 버튼 상태를 설정
     const savedDisplayMode = localStorage.getItem('displayMode');
-    console.log(`[INIT] On load, localStorage 'displayMode' is: "${savedDisplayMode}"`); // 추가 로그
+    console.log(`[INIT] On load, localStorage 'displayMode' is: "${savedDisplayMode}"`);
 
-    // 모든 라디오 버튼을 먼저 unchecked 상태로 만듭니다. (안전 장치)
+    // 모든 라디오 버튼의 checked 상태를 초기화합니다. (안전 장치)
     displayModeRadios.forEach(radio => {
         radio.checked = false;
     });
 
     if (savedDisplayMode) {
-        // 저장된 값에 해당하는 라디오 버튼을 찾아서 checked 상태로 만듭니다.
         const targetRadio = document.getElementById(`mode${savedDisplayMode}`);
         if (targetRadio) {
             targetRadio.checked = true;
-            console.log(`[INIT] Set radio button for mode: ${savedDisplayMode}. Current checked state: ${targetRadio.checked}`); // 추가 로그
+            console.log(`[INIT] Set radio button for mode: ${savedDisplayMode}. Current checked state: ${targetRadio.checked}`);
         } else {
             console.warn(`[INIT] Saved display mode "${savedDisplayMode}" not found, falling back to default.`);
             // 저장된 모드가 유효하지 않으면 HTML에 기본값으로 'checked'된 라디오 버튼을 찾아서 설정
@@ -539,9 +541,22 @@ window.addEventListener('load', () => {
             console.log(`[INIT] Default display mode "${defaultCheckedRadio.value}" saved to localStorage.`);
         }
     }
-    // 최종적으로 현재 라디오 버튼 상태에 맞게 오버레이를 적용합니다.
+
+    // 2. 초기 로드 시 한 번만 toggleDisplayMode를 호출하여 오버레이 상태를 적용합니다.
+    // (이 시점에는 라디오 버튼의 checked 상태가 localStorage 값으로 이미 설정되어 있습니다.)
     toggleDisplayMode();
-    console.log('[INIT] Final checked radio button value after load:', document.querySelector('input[name="displayMode"]:checked')?.value); // 추가 로그
+    console.log('[INIT] Final checked radio button value after load:', document.querySelector('input[name="displayMode"]:checked')?.value);
+
+
+    // 3. 그 다음, 나머지 초기화 로직을 수행합니다. (displayWord 호출 포함)
+    const lastAppMode = localStorage.getItem('lastAppMode');
+    if (lastAppMode === 'favorite') {
+        isGeneralMode = false;
+    } else {
+        isGeneralMode = true; // 기본값은 일반 모드
+    }
+    changeMode(isGeneralMode); // 이 함수는 displayWord()를 호출합니다.
+
 });
 
 // DOMContentLoaded는 script가 body 끝에 있으므로 window.load 이후에 실행될 필요 없음
