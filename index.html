@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 외국어 학습 앱</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>나만의 외국어 학습 앱</h1>
+
+        <div class="mode-selection">
+            <button id="generalModeBtn" class="active">일반 모드</button>
+            <button id="favoriteModeBtn">즐겨찾기 모드</button>
+        </div>
+
+        <div class="word-display-area">
+            <div class="word-card">
+                <!-- 공부 언어 (A) -->
+                <div class="word-box foreign-word-box">
+                    <p id="foreignWord" class="word-text foreign-word">Loading...</p>
+                    <div id="foreignOverlay" class="overlay">클릭하여 보기</div>
+                </div>
+                <!-- 사용자 언어 (B) -->
+                <div class="word-box meaning-box">
+                    <p id="meaning" class="word-text meaning">Loading...</p>
+                    <div id="meaningOverlay" class="overlay">클릭하여 보기</div>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="speakBtn" class="icon-button">
+                    <img src="https://img.icons8.com/ios-filled/24/000000/speaker.png" alt="발음 듣기">
+                </button>
+                <button id="favoriteBtn" class="icon-button">
+                    <img id="favoriteIcon" src="https://img.icons8.com/ios-glyphs/24/000000/star--v1.png" alt="즐겨찾기">
+                </button>
+                <button id="editBtn" class="icon-button">
+                    <img src="https://img.icons8.com/ios-glyphs/24/000000/edit--v1.png" alt="수정">
+                </button>
+                <button id="deleteBtn" class="icon-button">
+                    <img src="https://img.icons8.com/ios-glyphs/24/000000/filled-trash.png" alt="삭제">
+                </button>
+            </div>
+        </div>
+
+        <!-- 언어 표시 모드 선택 -->
+        <div class="display-mode-selection">
+            <label>표시 모드:</label>
+            <input type="radio" id="modeAB" name="displayMode" value="AB" checked>
+            <label for="modeAB">공부언어 (A) ➡️ 사용자언어 (B)</label>
+            <input type="radio" id="modeBA" name="displayMode" value="BA">
+            <label for="modeBA">사용자언어 (B) ➡️ 공부언어 (A)</label>
+        </div>
+
+
+        <div class="navigation-area">
+            <button id="prevBtn">&lt; 앞장</button>
+            <span id="statusMessage" class="status-message"></span>
+            <button id="nextBtn">뒷장 &gt;</button>
+        </div>
+
+        <div class="word-count">
+            <span id="currentWordIndex">1</span> / <span id="totalWords">1</span>
+        </div>
+
+        <hr>
+
+        <!-- 단어 수정 섹션 (초기에는 숨김) -->
+        <div class="section-edit-word" style="display: none;">
+            <h2>단어 수정</h2>
+            <input type="text" id="editForeignWord" placeholder="수정할 외국어 단어" class="input-field">
+            <input type="text" id="editMeaning" placeholder="수정할 의미" class="input-field">
+            <button id="saveEditBtn">수정 완료</button>
+            <button id="cancelEditBtn" class="cancel-button">취소</button>
+        </div>
+
+        <hr class="edit-hr" style="display: none;">
+
+        <div class="section-add-word">
+            <h2>새로운 단어 추가</h2>
+            <input type="text" id="newForeignWord" placeholder="외국어 단어" class="input-field">
+            <input type="text" id="newMeaning" placeholder="의미" class="input-field">
+            <button id="addWordBtn">단어 추가</button>
+        </div>
+
+        <hr>
+
+        <div class="section-data-management">
+            <h2>데이터 관리</h2>
+            <div>
+                <button id="exportCsvBtn">CSV 내보내기</button>
+                <button id="exportJsonBtn">JSON 내보내기</button>
+            </div>
+            <div style="margin-top: 10px;">
+                <input type="file" id="importFile" accept=".csv, .json" style="display: none;">
+                <button id="importBtn">CSV / JSON 파일 가져오기</button>
+                <span id="fileNameDisplay">파일 선택 안됨</span>
+                <button id="confirmImportBtn" style="display: none;">불러오기</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

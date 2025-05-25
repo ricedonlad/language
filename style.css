@@ -1,0 +1,365 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 상단 정렬 */
+    min-height: 100vh;
+    background-color: #f4f7f6;
+    margin: 20px;
+    color: #333;
+}
+
+.container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+h1 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+.mode-selection {
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.mode-selection button {
+    background-color: #ecf0f1;
+    color: #333;
+    border: 1px solid #bdc3c7;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.mode-selection button.active {
+    background-color: #3498db;
+    color: #ffffff;
+    border-color: #3498db;
+}
+
+.mode-selection button:hover:not(.active) {
+    background-color: #e0e6e9;
+}
+
+.word-display-area {
+    background-color: #e8f0fe; /* Light blue background */
+    border: 1px solid #cce0ff;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 30px;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.word-card {
+    display: flex; /* Flexbox로 가로로 배치 */
+    justify-content: space-around; /* 요소들을 균등하게 배치 */
+    align-items: center;
+    min-height: 120px; /* 카드 최소 높이 증가 */
+    gap: 15px; /* 두 박스 사이 간격 */
+    flex-wrap: wrap; /* 작은 화면에서 줄바꿈 허용 */
+}
+
+.word-box {
+    background-color: #f7faff;
+    border: 1px solid #d0e0ff;
+    border-radius: 8px;
+    padding: 15px 20px;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1; /* 가용한 공간을 균등하게 분배 */
+    min-width: 180px; /* 너무 작아지지 않도록 최소 너비 설정 */
+    position: relative; /* 오버레이를 위해 */
+    overflow: hidden; /* 오버레이가 박스 밖으로 나가지 않도록 */
+}
+
+.word-text {
+    margin: 0;
+    text-align: center;
+    word-break: keep-all; /* 단어가 길 경우 줄바꿈 유지 */
+}
+
+.foreign-word {
+    font-size: 1.8em; /* 폰트 크기 조정 */
+    font-weight: bold;
+    color: #2980b9;
+}
+
+.meaning {
+    font-size: 1.1em; /* 폰트 크기 조정 */
+    color: #555;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* 어둡게 가림 */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.overlay:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.overlay.hidden {
+    display: none;
+}
+
+
+.controls {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 5px;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.icon-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.icon-button img {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}
+
+/* 언어 표시 모드 선택 */
+.display-mode-selection {
+    margin-bottom: 20px;
+    background-color: #f0f8ff;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #cce0ff;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px 15px; /* Row and column gap */
+}
+
+.display-mode-selection label {
+    font-size: 0.95em;
+    color: #34495e;
+    cursor: pointer;
+    white-space: nowrap; /* Prevent label text from wrapping */
+}
+
+.display-mode-selection input[type="radio"] {
+    margin-right: 5px;
+    transform: scale(1.1); /* 라디오 버튼 크기 약간 키움 */
+}
+
+
+.navigation-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px; /* 버튼과 메시지 사이 간격 */
+}
+
+.navigation-area button {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    flex-grow: 1; /* 양쪽 버튼이 공간을 채우도록 */
+    transition: background-color 0.3s, transform 0.1s;
+    white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
+}
+
+.navigation-area button:hover {
+    background-color: #27ae60;
+    transform: translateY(-1px);
+}
+
+.navigation-area button:active {
+    transform: translateY(0);
+}
+
+.status-message {
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 0.95em;
+    flex-shrink: 0; /* 메시지 영역이 줄어들지 않도록 */
+}
+
+.word-count {
+    margin-bottom: 30px;
+    font-size: 1.1em;
+    color: #7f8c8d;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 35px 0;
+}
+
+.section-add-word, .section-edit-word, .section-data-management {
+    text-align: left;
+    margin-bottom: 25px;
+}
+
+.section-add-word h2, .section-edit-word h2, .section-data-management h2 {
+    color: #34495e;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.input-field {
+    width: calc(100% - 20px);
+    padding: 12px 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+}
+
+.input-field::placeholder {
+    color: #bbb;
+}
+
+.section-add-word button, .section-edit-word button, .section-data-management button {
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    width: 100%;
+    box-sizing: border-box;
+    transition: background-color 0.3s;
+    margin-bottom: 10px; /* 버튼 아래 여백 */
+}
+
+.section-data-management button {
+    background-color: #9b59b6; /* Export/Import buttons */
+}
+.section-data-management button:first-child {
+    margin-top: 0;
+}
+
+.section-add-word button:hover {
+    background-color: #e67e22;
+}
+.section-edit-word button:hover {
+    background-color: #f39c12; /* Keep same hover as add button */
+}
+.section-data-management button:hover {
+    background-color: #8e44ad;
+}
+
+.cancel-button {
+    background-color: #7f8c8d !important; /* 회색 톤 */
+}
+
+.cancel-button:hover {
+    background-color: #95a5a6 !important; /* 더 밝은 회색 */
+}
+
+#fileNameDisplay {
+    margin-left: 10px;
+    font-size: 0.9em;
+    color: #555;
+    vertical-align: middle;
+}
+
+#confirmImportBtn {
+    background-color: #c0392b; /* Danger color for confirmation */
+}
+
+#confirmImportBtn:hover {
+    background-color: #a93226;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+    .container {
+        margin: 10px;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+
+    .word-card {
+        flex-direction: column; /* 세로로 쌓기 */
+        gap: 10px;
+    }
+    .word-box {
+        width: 100%; /* 전체 너비 차지 */
+        min-width: unset; /* 최소 너비 제한 해제 */
+    }
+
+    .foreign-word {
+        font-size: 1.8em;
+    }
+
+    .meaning {
+        font-size: 1.1em;
+    }
+
+    .navigation-area button {
+        padding: 10px 15px;
+        font-size: 1em;
+    }
+
+    .section-add-word button, .section-edit-word button, .section-data-management button {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+    .display-mode-selection {
+        flex-direction: column; /* 라디오 버튼 세로 배열 */
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .display-mode-selection label {
+        margin-left: 0; /* Align with radio button */
+    }
+}
